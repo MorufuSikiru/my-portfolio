@@ -154,6 +154,9 @@ main {
   min-height: auto;
 }
 
+.hero-convert{
+  color: tomato;
+}
 .hero-text,
 .hero-image {
   flex: 1;
@@ -161,7 +164,7 @@ main {
 
 .hero-text h1 {
   font-size: clamp(2.5rem, 5vw, 4.5rem);
-  line-height: 1.1;
+  line-height: 1.2;
   margin-bottom: 1rem;
 }
 
@@ -172,8 +175,13 @@ main {
 .hero-sub {
   font-size: 1.05rem;
   color: #e2e8f0;
-  max-width: 600px;
+  max-width: 500px;
   margin-bottom: 1.5rem;
+}
+.hero-trust {
+  margin: 15px 0 20px;
+  font-size: 14px;
+  color: #ccc;
 }
 .hero-stack {
   display: flex;
@@ -199,6 +207,8 @@ main {
 .hero-image img {
   width: 100%;
   max-width: 430px;
+   border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 .hero-actions {
@@ -583,6 +593,13 @@ main {
 .project-link:hover {
   color: #7dd3fc;
 }
+.project-features {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #dcdada;
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
 
 .contact-grid {
   margin-top: 3rem;
@@ -739,6 +756,15 @@ main {
   margin-top: 0.8rem;
   color: var(--grey);
   font-size: 0.95rem;
+}
+.contact-alt {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.contact-alt a {
+  color: orange;
+  text-decoration: none;
 }
 .social-link:hover {
   color: var(--cyan);
