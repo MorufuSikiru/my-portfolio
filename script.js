@@ -1,136 +1,256 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const reveals = document.querySelectorAll(".reveal.animate");
-  const skillCards = document.querySelectorAll(".skill-card");
-  const sections = document.querySelectorAll("section[id]");
-  const navLinks = document.querySelectorAll(".nav-links a");
-  const menuToggle = document.getElementById("menuToggle");
-  const navbar = document.getElementById("navbar");
-  const navItems = document.querySelectorAll(".nav-links a");
+// Navbar scroll
+window.addEventListener(
+  "scroll",
+  () => {
+    document
+      .getElementById(
+        "navbar",
+      )
+      .classList.toggle(
+        "scrolled",
+        window.scrollY >
+          50,
+      );
+  },
+);
 
-  const contactForm = document.getElementById("contactForm");
-  const formSuccess = document.getElementById("formSuccess");
-  const submitBtn = document.querySelector(".form-submit");
+// Mobile nav
+document
+  .getElementById(
+    "hamburger",
+  )
+  .addEventListener(
+    "click",
+    () =>
+      document
+        .getElementById(
+          "mobileNav",
+        )
+        .classList.add(
+          "open",
+        ),
+  );
+document
+  .getElementById(
+    "mobileClose",
+  )
+  .addEventListener(
+    "click",
+    () =>
+      document
+        .getElementById(
+          "mobileNav",
+        )
+        .classList.remove(
+          "open",
+        ),
+  );
+document
+  .querySelectorAll(
+    ".mobile-link",
+  )
+  .forEach(
+    (
+      l,
+    ) =>
+      l.addEventListener(
+        "click",
+        () =>
+          document
+            .getElementById(
+              "mobileNav",
+            )
+            .classList.remove(
+              "open",
+            ),
+      ),
+  );
 
-  /* Reveal animation */
-  if (reveals.length > 0) {
-    const revealObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
+// Scroll reveal
+const observer =
+  new IntersectionObserver(
+    (
+      entries,
+    ) => {
+      entries.forEach(
+        (
+          e,
+        ) => {
+          if (
+            e.isIntersecting
+          ) {
+            e.target.classList.add(
+              "visible",
+            );
+            // Animate skill bars
+            e.target
+              .querySelectorAll(
+                ".skill-bar-fill",
+              )
+              .forEach(
+                (
+                  bar,
+                ) => {
+                  bar.style.width =
+                    bar
+                      .dataset
+                      .width +
+                    "%";
+                },
+              );
           }
-        });
-      },
-      { threshold: 0.12 }
-    );
+        },
+      );
+    },
+    {
+      threshold: 0.1,
+    },
+  );
+document
+  .querySelectorAll(
+    ".reveal",
+  )
+  .forEach(
+    (
+      el,
+    ) =>
+      observer.observe(
+        el,
+      ),
+  );
+// Contact form
 
-    reveals.forEach((item) => revealObserver.observe(item));
-  }
+const contactForm =
+  document.getElementById(
+    "contactForm",
+  );
 
-  /* Skill bar animation */
-  if (skillCards.length > 0) {
-    const skillObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const bars = entry.target.querySelectorAll(".skill-bar-fill");
+const formSubmit =
+  document.getElementById(
+    "formSubmit",
+  );
 
-            bars.forEach((bar) => {
-              const percent = bar.dataset.pct;
-              if (percent) {
-                bar.style.width = `${percent}%`;
-              }
-            });
+const formSuccess =
+  document.getElementById(
+    "formSuccess",
+  );
 
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
+contactForm.addEventListener(
+  "submit",
+  async (e) => {
 
-    skillCards.forEach((card) => skillObserver.observe(card));
-  }
+    e.preventDefault();
 
-  /* Active nav link on scroll */
-  function setActiveLink() {
-    let currentSection = "";
+    const fname =
+      document
+        .getElementById(
+          "fname",
+        )
+        .value
+        .trim();
 
-    sections.forEach((section) => {
-      const sectionTop = section.offsetTop - 140;
-      const sectionHeight = section.offsetHeight;
+    const email =
+      document
+        .getElementById(
+          "femail",
+        )
+        .value
+        .trim();
+
+    const msg =
+      document
+        .getElementById(
+          "fmessage",
+        )
+        .value
+        .trim();
+
+    if (
+      !fname ||
+      !email ||
+      !msg
+    ) {
+
+      alert(
+        "Please fill in your name, email and message.",
+      );
+
+      return;
+    }
+
+    formSubmit.textContent =
+      "Sending...";
+
+    const formData =
+      new FormData(
+        contactForm,
+      );
+
+    try {
+
+      const response =
+        await fetch(
+          contactForm.action,
+          {
+            method:
+              "POST",
+
+            body:
+              formData,
+
+            headers: {
+              Accept:
+                "application/json",
+            },
+          },
+        );
 
       if (
-        window.scrollY >= sectionTop &&
-        window.scrollY < sectionTop + sectionHeight
+        response.ok
       ) {
-        currentSection = section.getAttribute("id");
-      }
-    });
 
-    navLinks.forEach((link) => {
-      link.classList.remove("active-link");
+        formSubmit.textContent =
+          "Sent Successfully";
 
-      if (link.getAttribute("href") === `#${currentSection}`) {
-        link.classList.add("active-link");
-      }
-    });
-  }
+        formSuccess.style.display =
+          "block";
 
-  window.addEventListener("scroll", setActiveLink);
-  window.addEventListener("load", setActiveLink);
+        contactForm.reset();
 
-  /* Hamburger menu */
-  if (menuToggle && navbar) {
-    menuToggle.addEventListener("click", () => {
-      menuToggle.classList.toggle("active");
-      navbar.classList.toggle("show");
-    });
+        setTimeout(
+          () => {
 
-    navItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        menuToggle.classList.remove("active");
-        navbar.classList.remove("show");
-      });
-    });
-  }
+            formSuccess.style.display =
+              "none";
 
-  /* Formspree form submission without redirect */
-  if (contactForm && submitBtn && formSuccess) {
-    formSuccess.style.display = "none";
+            formSubmit.textContent =
+              "Send Message →";
 
-    contactForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = "<span>Sending...</span>";
-
-      const formData = new FormData(contactForm);
-
-      try {
-        const response = await fetch(contactForm.action, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Accept: "application/json",
           },
-        });
+          5000,
+        );
 
-        if (response.ok) {
-          contactForm.reset();
-          formSuccess.style.display = "block";
-          submitBtn.innerHTML = "<span>Sent ✅</span>";
-        } else {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = "<span>Try Again</span>";
-          alert("Something went wrong. Please try again.");
-        }
-      } catch (error) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "<span>Try Again</span>";
-        alert("Network error. Please check your connection and try again.");
+      } else {
+
+        alert(
+          "Failed to send message.",
+        );
+
+        formSubmit.textContent =
+          "Send Message →";
       }
-    });
-  }
-});
+
+    } catch (
+      error
+    ) {
+
+      alert(
+        "Something went wrong.",
+      );
+
+      formSubmit.textContent =
+        "Send Message →";
+    }
+
+  },
+);
